@@ -2,7 +2,7 @@
 *Files to look at*:
 
 * [index.html](./index.html)
-* [index.js](./JS/index.js)
+* [index.js](./js/index.js)
 <!-- default file list end -->
 
 # TreeList - How to perform CRUD operations on a hierarchical data source

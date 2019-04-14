@@ -1,63 +1,68 @@
-$(function() {
-    var findItem = function(items, key, withIndex) {
-      var item;
-      for(var i = 0; i < items.length; i++) {
+var dataKey = "Full_Name";
+
+function findItem(items, key, withIndex) {
+    var item;
+    for (var i = 0; i < items.length; i++) {
         item = items[i];
-        if(item.Full_Name === key) {
-          return withIndex ? { item, items, index: i } : item;
+        if (item[dataKey] === key) {
+            return withIndex ? { item, items, index: i } : item;
         }
         item = item.items && findItem(item.items, key, withIndex);
-        if(item) {
-          return item;
+        if (item) {
+            return item;
         }
-      }
     }
-    
+}
+
+$(function () {
     $("#employees").dxTreeList({
         dataSource: {
-          key: "Full_Name",
-          load: function() {
-            return employees;
-          },
-          insert: function(values) {
-            var parentItem = findItem(employees, values.Parent_ID);
-            delete values.Parent_ID;
-            if(!parentItem) {
-              employees.push(values);
-            } else {
-              parentItem.items = parentItem.items || [];
-              parentItem.items.push(values);
+            key: dataKey,
+            load: function () {
+                return employees;
+            },
+            insert: function (values) {
+                var parentItem = findItem(employees, values.Parent_ID);
+                delete values.Parent_ID;
+                if (!parentItem) {
+                    employees.push(values);
+                } else {
+                    parentItem.items = parentItem.items || [];
+                    parentItem.items.push(values);
+                }
+            },
+            update: function (key, values) {
+                var item = findItem(employees, key);
+                if (item) {
+                    Object.assign(item, values);
+                }
+            },
+            remove: function (key) {
+                var itemWithIndex = findItem(employees, key, true);
+                if (itemWithIndex) {
+                    itemWithIndex.items.splice(itemWithIndex.index, 1);
+                }
             }
-          },
-          update: function(key, values) {
-            var item = findItem(employees, key);
-            if(item) {
-              Object.assign(item, values);
-            }
-          },
-          remove: function(key, values) {
-            var itemWithIndex = findItem(employees, key, true);
-            if(itemWithIndex) {
-              itemWithIndex.items.splice(itemWithIndex.index, 1);
-            }
-          }
         },
         dataStructure: "tree",
-        keyExpr: "Full_Name",
+        keyExpr: dataKey,
         itemsExpr: "items",
         parentIdExpr: "Parent_ID",
         columns: [{
             dataField: "Title",
             caption: "Position"
-        }, "Full_Name", "City", "State", "Mobile_Phone", {
+        }, {
+            dataField: "Full_Name",
+            validationRules: [{ type: "required" }]
+        }, "City", "State", "Mobile_Phone", {
             dataField: "Hire_Date",
             dataType: "date"
         }],
         editing: {
-          mode: "cell",
-          allowAdding: true,
-          allowUpdating: true,
-          allowDeleting: true
+            mode: "cell",
+            allowAdding: true,
+            allowUpdating: true,
+            allowDeleting: true
         },
         expandedRowKeys: ["John Heart"],
         showRowLines: true,

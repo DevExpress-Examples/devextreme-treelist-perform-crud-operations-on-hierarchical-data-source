@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import CustomStore from 'devextreme/data/custom_store';
 import { Employee, employees } from './data';
@@ -35,6 +35,7 @@ function findItem(
     selector: 'app-root',
     imports: [DxTreeListModule],
     templateUrl: './app.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
